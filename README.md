@@ -30,7 +30,7 @@ Wenzhou-Kean University · CPS Project · 2025
 All meeting notes and technical discussions will be stored in `docs/`.
 
 ## 📄 会前必读文件
-
+<!-- update for sync -->
 - [01｜会议规则说明](docs/3440会议规则.docx)
 - [02｜Git 分支结构说明](docs/Git分支结构说明.docx)
 - [03｜Git Hub Vscode 使用说明](docs/GitHub_Vscode使用说明.docx)
