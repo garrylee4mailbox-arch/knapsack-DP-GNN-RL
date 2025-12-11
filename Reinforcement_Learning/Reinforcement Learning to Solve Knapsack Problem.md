@@ -57,7 +57,8 @@ Several core components(similar with **Markov Decision Process** but added $Q-va
 - using $\epsilon-greedy$ policy to take action: using $\epsilon$ possibility to choose random exploration (test new actions), using $1-\epsilon$ possibility to choose current actions with the highest $Q-value$.
 1. **Update $Q-value$:** After taking action, check new state $S'$ and reward $R$, using **Bellman Equation (*Weighted Average Form*)** to update:
 
-$$Q(S_t,A_t)_{new}\leftarrow (1-\alpha)Q(S_t,A_t)+ \alpha\cdot(R_{t+1} + \gamma\cdot maxQ(S_{t+1},A_{t+1}))$$
+$$Q(S_t,A_t)_{new} \leftarrow (1-\alpha)Q(S_t,A_t) + \alpha \cdot (R_{t+1} + \gamma \cdot \max Q(S_{t+1},A_{t+1}))$$
+
 where $R_{t+1}$ is the reward received when moving from the state $S_t$ to the state $S_{t+1}$, and $\alpha$ is the learning rate within [0, 1]
 
 Note that $Q(S_t,A_t)_{new}$ is the sum of three terms:
@@ -69,6 +70,7 @@ Note that $Q(S_t,A_t)_{new}$ is the sum of three terms:
 Notice that the **Bellman Equation** also has an ***Incremental Form***:
 
 $$Q(S_t,A_t)_{new}\leftarrow Q(S_t,A_t)+ \alpha\cdot(R_{t+1} + \gamma\cdot maxQ(S_{t+1},A_{t+1}) - Q(S_t,A_t))$$
+
 These two forms are the same and can be transformed to each other.
 
 4. **Recursive:** running multiple episodes, until $Q-value$ converges (agent finds the optimal policy: always chooses the action with the highest $Q-value$)
