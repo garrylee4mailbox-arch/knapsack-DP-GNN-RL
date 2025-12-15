@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-12-15 12:30:48",
+  "device": "cpu",
+  "n_instances": 100,
+  "seed": 2025,
+  "metrics": {
+    "feasible_rate": 1.0,
+    "avg_gnn_value": 619.99,
+    "std_gnn_value": 219.87953497313023,
+    "avg_fill_ratio": 0.9987523475169549,
+    "std_fill_ratio": 0.0021377662387713097,
+    "avg_selected_k": 10.83,
+    "avg_solve_time_sec": 0.002572323998901993,
+    "p95_solve_time_sec": 0.003591121868157642,
+    "total_time_sec": 0.2877143000077922
+  }
+}

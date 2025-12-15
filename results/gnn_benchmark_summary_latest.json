@@ -1,0 +1,18 @@
+{
+  "run_id": "20251215_180709",
+  "timestamp": "2025-12-15 18:07:09",
+  "device": "cpu",
+  "n_instances": 100,
+  "seed": 2025,
+  "metrics": {
+    "feasible_rate": 1.0,
+    "avg_gnn_value": 619.91,
+    "std_gnn_value": 219.80610068876615,
+    "avg_fill_ratio": 0.998909653375307,
+    "std_fill_ratio": 0.0019325281071834106,
+    "avg_selected_k": 10.79,
+    "avg_solve_time_sec": 0.0008552189994952642,
+    "p95_solve_time_sec": 0.001179052494080679,
+    "total_time_sec": 0.10172740000416525
+  }
+}
