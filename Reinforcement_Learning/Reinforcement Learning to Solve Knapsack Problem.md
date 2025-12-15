@@ -778,11 +778,142 @@ if __name__ == "__main__":
 - Tests it.
 - Repeats test to get action list.
 - Runs full verification.
-
-
 # 4. Performance Evaluation and Conclusion
 
+## 1.9. Deep Q-Learning Network (DQN) Concepts
+Deep Q-Learning is a method that uses deep learning to help machines make decisions in complicated situations. It’s especially useful in environments where the number of possible situations called states is very large like in video games or robotics.
 
+Q-Learning works well for small problems but struggles with complex ones like images or many possible situations. Deep Q-Learning solves this by using a neural network to estimate values instead of a big table.
+
+### 1.9.1. DQN Architecture
+A standard DQN comprises several key components:
+1. **Q-Network (Function Approximator)**
+- **Input Layer:** Receives the current **state(S)**, which may be a vector of features, an image, or a more complex structure.
+- **Hidden Layers:** Multiple fully connected or convolutional layers (for image-based inputs) extract hierarchical features from the state.
+- **Output Layer:** Produces a vector of Q-values, one for each possible action ( a ), i.e. ( Q(s, a; $\theta$) ), where ( $\theta$ ) denotes the network parameters.
+
+2. **Experience Relay Buffer**
+- Stores past experiences as tuples.
+- During training, mini-batches are sampled randomly from the buffer, breaking the temporal correlations present in sequential data and improving the stability and efficiency of learning.
+
+3. **Target Network**
+- A separate copy of the Q-network, with parameters ( $\theta^-$ ), used to compute target Q-values for the Bellman update.
+- The target network is updated less frequently (e.g., every ( C ) steps) by copying the weights from the main Q-network, which helps stabilize training by providing a fixed target for several updates.
+4. $\epsilon$ -Greedy Exploration
+ - The agent selects a random action with probability ( $\epsilon$ ) (***exploration***) and the action with the highest Q-value with probability ( $1 - \epsilon$ ) (***exploitation***).
+ - $\epsilon$ is typically decayed over time to shift from exploration to exploitation as learning progresses.
+ 
+ 4. **Loss Function and Optimization**
+- The loss function is the mean squared error between the predicted Q-value and the target Q-value computed using the target network:
+
+$$L(\theta) = \mathbb{E}_{(s, a, r, s') \sim D} \left[ \left( r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta) \right)^2 \right]$$
+
+where $\gamma$ is the discount factor and $D$ is the reply buffer.
+- The network parameters $\theta$ are updated via stochastic gradient descent or Adam optimizer.
+
+5. **Training Loop**
+The DQN training process can be summarized as follows:
+- Initialize the Q-network, target network, and replay buffer.
+- For each episode:
+	- Observe the current state ( $s$ ).
+	- Select action ( $a$ ) using epsilon-greedy policy.
+    - Execute ( $a$ ), observe reward ( $r$) and next state ( $s'$ ).
+    - Store ( ($s, a, r, s', done$) ) in the replay buffer.
+    - Sample a mini-batch from the buffer.
+    - Compute target Q-values using the target network.
+    - Update the Q-network by minimizing the loss.
+    - Periodically update the target network.
+    - Decay ( $\epsilon$ ).
+    
+### 1.9.2. Theoretical Foundations and Convergence
+While classical Q-Learning with a lookup table is guaranteed to converge to the optimal Q-function under certain conditions (e.g. sufficient exploration, decaying learning rate), the introduction of non-linear function approximators (deep neural networks) complicates the convergence analysis.
+1. **Function Approximation and Statistical Error**
+- **Approximation Bias:** The neural network may not be expressive enough to represent the true Q-function, introducing bias.
+- **Statistical Error:** Finite sample sizes and stochastic optimization introduce variance in the learned Q-function.
+- **Algorithmic Error:** The iterative update process may not fully converge within a finite number of steps.
+
+Recent theoretical work has established that, under mild assumptions, DQN's Q-function sequence converges geometrically to the optimal Q-function up to an irreducible statistical error determined by the network's approximation capacity and sample size. The use of experience replay and target networks is justified as mechanisms to stabilize training and reduce variance.
+1. **Stability Mechanisms**
+- **Experience Replay:** Breaks temporal correlations, providing i.i.d. samples for gradient updates.
+- **Target Network:** Prevents the moving target problem, where the target Q-value shifts as the network is updated.
+- **Batch Updates and Large Replay Buffers:** Further reduce variance and improve convergence rates.
+
+1.9.3. DQN vs Traditional Q-Learning: Core Differences
+
+| Aspect              | Q-Learning (Tabular)                  | DQN (Deep Q-Learning)                   |
+| ------------------- | ------------------------------------- | --------------------------------------- |
+| Q-Function          | Explicit table $Q(s, a)$              | Neural network $Q(s, a; \theta)$        |
+| State/Action Spaces | Small, discrete                       | Large, continunous, or high-dimensional |
+| Generalization      | None; only seen states/actions        | Generalizes to unseen states            |
+| Memory Usage        | Grows exponentially with state/action | Fixed by network size                   |
+| Update Rule         | Direct table update                   | Gradient descent on loss                |
+| Convergence         | Guaranteed under standard conditions  | Not guaranteed; depend on stability     |
+
+
+## Deep Q-Learning Network (DQN) Algorithm for Knapsack Problem
+
+### Step 1: Formulating the Environment as a MDP for DQN
+To apply **DQN**, the Knapsack Problem must be cast as a **Markov Decision Process (MDP)**, specifying the state space, action space, reward function, and episode termination conditions.
+
+#### 3.2.1. DQN Network Architecture Choices
+
+The architecture of the Q-network depends on the state representation:
+
+1. **Multilayer Perceptron (MLP)**
+- For vector-based states (e.g., binary selection vectors, aggregated features), a standard MLP with several hidden layers and ReLU activations is sufficient.
+- **Input**: State vector (e.g., selected items, remaining capacity).
+- **Output**: Q-values for each possible action.
+
+2. **Convolutional Neural Networks (CNNs)**
+- For image-like or grid-based representations (less common in KP), CNNs can be used.
+
+3. **Transformer-Based Architectures**
+- For permutation-invariant or variable-length inputs (e.g., sets of items), Transformers or attention-based models can be employed, enabling generalization across problem sizes.
+
+#### 3.2.2. DQN Training Process: Step-by-Step
+The standard DQN training loop for the Knapsack Problem proceeds as follows:
+
+##### **Initialization**
+- Initialize the Q-network with random weights.
+- Initialize the target network (a copy of the Q-network).
+- Initialize the experience replay buffer.
+
+##### **Episode Loop**
+
+For each episode:
+
+1. **Reset the environment**: Start with an empty knapsack and all items available.
+2. **State Observation**: Observe the initial state ( $s_0$ ).
+3. **Step Loop**:
+
+- For each step ( $t$ ):
+
+- **Action Selection**: Select action ( $a_t$ ) using an epsilon-greedy policy:
+
+- With probability ( $\epsilon$ ), select a random feasible action.
+- Otherwise, select ( $a_t = \arg\max_a Q(s_t, a; \theta)$ ).
+
+- **Action Masking**: Mask infeasible actions to prevent selection.
+- **Environment Transition**: Apply action ( $a_t$ ), observe reward ( $r_t$ ), next state ( $s_{t+1}$ ), and done flag.
+- **Experience Storage**: Store transition ( $(s_t, a_t, r_t, s_{t+1}, \text{done})$ ) in the replay buffer.
+- **Learning Step**: If enough samples are in the buffer, sample a mini-batch and perform a gradient descent step to minimize the DQN loss:
+
+$$L(\theta) = \mathbb{E}_{(s, a, r, s', \text{done})} \left[ \left( r + \gamma \max_{a'} Q_{\text{target}}(s', a'; \theta^-) \cdot (1 - \text{done}) - Q(s, a; \theta) \right)^2 \right]$$
+
+- **Target Network Update**: Periodically update the target network parameters ( $\theta^- \leftarrow \theta$).
+- **Termination Check**: If done, break the step loop.
+
+##### Epsilon Decay
+
+- Gradually reduce ( $\epsilon$ ) over episodes to shift from exploration to exploitation.
+
+##### Training Hyperparameters
+
+- **Learning rate**: Typically ( $1e-3$ ) to ( $1e-4$ ).
+- **Discount factor ( $\gamma$ )**: Often set to 0.99.
+- **Replay buffer size**: 10,000–100,000 transitions.
+- **Batch size**: 32–128.
+- **Target network update frequency**: Every 100–1000 steps.
 
 
 
