@@ -69,12 +69,30 @@ def load_npz_instances(npz_path: str) -> List[KnapsackInstance]:
     W = np.asarray(W)
     V = np.asarray(V)
     C = np.asarray(C)
+
+    # Allow single-instance files saved as 1D arrays (directory-per-instance datasets)
+    if W.ndim == 1 and V.ndim == 1:
+        W = W[None, :]
+        V = V[None, :]
+    elif W.ndim == 1 and V.ndim == 2:
+        raise ValueError(f"weights ndim=1 but values ndim=2; expected both 1D or both 2D in {npz_path}")
+    elif W.ndim == 2 and V.ndim == 1:
+        raise ValueError(f"weights ndim=2 but values ndim=1; expected both 1D or both 2D in {npz_path}")
+
     if W.ndim != 2 or V.ndim != 2:
         raise ValueError(f"Dense format expects weights/values as 2D arrays; got W.ndim={W.ndim}, V.ndim={V.ndim}")
     if W.shape != V.shape:
         raise ValueError(f"Dense format expects weights/values same shape; got {W.shape} vs {V.shape}")
+
+    # Allow scalar capacity for single-instance files (directory-per-instance datasets)
+    if C.ndim == 0:
+        if W.shape[0] == 1:
+            C = np.array([_to_int(C)])
+        else:
+            raise ValueError(f"capacity is scalar but batch size is {W.shape[0]} in {npz_path}; expected 1D capacity per instance")
     if C.ndim != 1 or C.shape[0] != W.shape[0]:
-        raise ValueError(f"Dense format expects capacity shape [N]; got {C.shape} for N={W.shape[0]}")
+        raise ValueError(f"Dense format expects capacity shape [{W.shape[0]}]; got {C.shape} for N={W.shape[0]}")
+
     N, n = W.shape
     for i in range(N):
         instances.append(KnapsackInstance(i, _to_1d_int_array(W[i]), _to_1d_int_array(V[i]), _to_int(C[i])))

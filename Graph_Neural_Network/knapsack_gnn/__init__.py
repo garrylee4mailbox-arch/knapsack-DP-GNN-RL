@@ -1,0 +1,1 @@
+"""Knapsack GNN project modules."""
