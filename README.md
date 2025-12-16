@@ -177,8 +177,12 @@ knapsack-DP-GNN-DL/
 Course Project for **CPS 3440 – Algorithms**  
 Wenzhou-Kean University  
 
-Team Leader: *Your Name*  
-Contributors: *Team Members*
+Team Leader: Guanlin Li 1308245 (W07)  
+Contributors: 
+Chunguang Lu 1365419 (W08)
+Xiaoqian Zhang 1365436 (W08)
+Mingshi Cai 1365432 (W08)
+Yiyue Yin 1235600 (W07)
 
 ---
 
