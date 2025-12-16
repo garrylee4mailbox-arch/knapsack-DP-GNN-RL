@@ -196,6 +196,3 @@ Key advantages of the solution include:
 - Clear state definition and transition logic
 - Correct and efficient backtracking to recover selected items
 - Practical support for batch testing and result export
-
-Therefore, the solution is both **theoretically sound** and **practically applicable**, making it suitable for academic assignments and experimental reports.
-
